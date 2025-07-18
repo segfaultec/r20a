@@ -1,0 +1,28 @@
+{
+	"manifest_version": 3,
+	"name": "r20a",
+
+	"version": "1.0",
+	
+	"icons": {
+		"32": "icon.png",
+		"64": "icon@2x.png"
+	},
+
+	"description": "A series of tweaks to Roll20's editor",
+
+	"content_scripts": [
+		{
+			"matches": ["*://app.roll20.net/editor/*"],
+			"js": ["loader.js"],
+			"run_at": "document_end"
+		}
+	],
+
+	"web_accessible_resources": [
+		{
+			"resources": ["markermenu.js","markermenu.html","markermenu.css"],
+			"matches": ["*://app.roll20.net/*"]
+		}
+	]
+}

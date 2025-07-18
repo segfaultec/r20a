@@ -1,0 +1,159 @@
+#r20a-overlay-inner {
+    background-color: white;
+    font-family: Nunito,sans-serif;
+    border-radius: 4px;
+    border: rgb(170,170,170) solid 1px;
+    
+    summary {
+        display: block;
+    }
+
+    details > summary > h1 {
+        margin: 0 5px 0 5px;
+        display: inline;
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    details > summary::before {
+        content: '⯈';
+        font-size: 24px;
+    }
+    
+    details[open] > summary::before {
+        content: '⯆';
+        font-size: 24px;
+    }
+}
+
+#r20a-scrollbox {
+    border-top: rgb(170,170,170) solid 1px;
+    padding: 5px;
+    height: 300px;
+
+    overflow-y: scroll;
+    resize: vertical;
+
+    > h1 {
+        margin-left: 5px;
+        display: inline;
+        font-size: 24px;
+        font-weight: bold;
+    }
+}
+
+.r20a-border {
+    border-radius: 4px;
+    border: rgb(170,170,170) solid 1px;
+
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+
+    > * {
+        margin: 3px;
+    }
+}
+
+.r20a-markeredit-row {
+
+    display: flex;
+    align-items: center;
+
+    > * {
+        margin: 3px;
+    }
+
+    .statusicon {
+        box-sizing: content-box;
+    }
+
+    button {
+        box-sizing: border-box;
+        padding: 2px 6px 4px;
+    }
+
+    input[type=text].r20a-input-message {
+        width: 60px;
+        height: 30px;
+        box-sizing: border-box;
+    }
+}
+
+#r20a-markermenu {
+
+    border-radius: 4px;
+    border: rgb(170,170,170) solid 1px;
+
+    width: 290px;
+}
+
+#r20a-markermenu-header {
+    margin-top: 9px;
+    margin-bottom: 3px;
+}
+
+#r20a-markermenu {
+    .statusicon {
+        cursor: pointer;
+    }
+    .markercolor {
+        margin: 5px 2px 0 2px;
+    }
+    .markericon {
+        margin: 0 2px 0 0;
+    }
+}
+
+#r20a-markeredit {
+    .markercolor {
+        margin-right: 5px;
+    }
+    .markercolor.dead {
+        margin-right: 7px;
+    }
+}
+
+#r20a-markeredit, #r20a-markermenu {
+    font-family: "Proxima Nova","ProximaNova-Regular",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
+
+    .markercolor {
+        width: 22px;
+        height: 22px;
+        border-radius: 20px;
+        display: inline-block;
+        border: 4px solid white;
+    }
+
+    .markercolor.dead {
+        border-radius: 0px;
+        width: auto;
+        color: #cc1010;
+        font-size: 24px;
+        font-weight: bold;
+        position: relative;
+        top: -7px;
+        padding: 0 2px 0 2px;
+        line-height: 1.5rem;
+    }
+
+    .markericon {
+        display: inline-block;
+        background-image: url(https://files.d20.io/images/1/i-f4Y5RklihSCLNOzppdwA/icon.png?1575370609);
+        background-repeat: no-repeat;
+        background-size: 24px;
+        width: 24px;
+        height: 24px;
+        padding: 0;
+        border: 4px solid white;
+    }
+
+    .markericon.active {
+        border: 4px solid #aae3f0;
+    }
+    
+    .markercolor.active {
+        border: 4px solid #aae3f0;
+    }
+}
