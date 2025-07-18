@@ -24,5 +24,11 @@
 			"resources": ["markermenu.js","markermenu.html","markermenu.css"],
 			"matches": ["*://app.roll20.net/*"]
 		}
-	]
+	],
+	
+	"browser_specific_settings": {
+		"gecko": {
+			"id": "r20a@segfaultec"
+		}
+	}
 }
