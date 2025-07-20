@@ -213,7 +213,11 @@ var R20A = class {
             let input = row.querySelector(".r20a-input-message");
             if (active_status.message_varies) {
                 input.value = "<varies>";
-                input.onclick = (event) => {event.currentTarget.value = "";}
+                input.onclick = (event) => {
+					if (event.currentTarget.value == "<varies>") {
+						event.currentTarget.value = "";
+					}
+				}
             } else {
                 input.value = active_status.message;
                 input.onclick = null
