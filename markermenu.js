@@ -329,7 +329,7 @@ var R20A = class {
                             if (match[2] === "ft") {
                                 bump_amount *= 5;
                             }
-                            return split[0] + "@" + split[1].replace(number, number + amount);
+                            return split[0] + "@" + split[1].replace(number, number + bump_amount);
                         }
                     }
                     return s;
