@@ -32,18 +32,11 @@ var R20A = class {
         for (const color_key in token_editor.colorMarkers) {
             const color_value = token_editor.colorMarkers[color_key];
 
-            this.statusicons[color_key] = {type: "color", color: color_value};
+            this.statusicons[color_key] = {type: "color", color: color_value, name: color_key};
         }
-        this.statusicons["dead"] = {type: "dead"};
-        for (const token_key in token_editor.token_markers) {
-            const token_value = token_editor.token_markers[token_key];
-
-            let token_name = token_value.name;
-            if (token_key > 100) {
-                token_name += "::" + token_key;
-            }
-
-            this.statusicons[token_name] = {type: "token", url: token_value.image.src};
+        this.statusicons["dead"] = {type: "dead", name: "dead"};
+        for (const token of token_marker_array) {
+            this.statusicons[token.tag] = {type: "token", url: token.url, name: token.name};
         }
 
         let markermenu = document.getElementById("r20a-markermenu");
@@ -54,7 +47,7 @@ var R20A = class {
             this.format_statusicon(element, status_id, status_value);
 
             element.onclick = (event) => {
-                this.on_markermenu_statusicon_clicked(event.currentTarget.title, event.currentTarget.classList.contains("active"));
+                this.on_markermenu_statusicon_clicked(event.currentTarget.dataset.tag, event.currentTarget.classList.contains("active"));
             };
 
             markermenu.appendChild(element);
@@ -65,23 +58,21 @@ var R20A = class {
 
     format_statusicon(element, status_id, status_value) {
         element.classList.add("statusicon");
+        element.title = status_value.name;
+        element.dataset.tag = status_id;
         if (status_value.type === "token") {
             element.classList.add("markericon");
-            element.title = status_id;
             element.style.backgroundImage = `url(${status_value.url})`;
         } else if (status_value.type === "color") {
             element.classList.add("markercolor");
-            element.title = status_id;
             element.style.backgroundColor = status_value.color;
         } else if (status_value.type === "dead") {
             element.classList.add("markercolor");
             element.classList.add("dead");
-            element.title = "dead";
             element.innerText = "X";
         } else if (status_value.type === "unknown") {
             element.classList.add("markercolor");
             element.classList.add("dead");
-            element.title = status_value.id;
             element.innerText = "?";
         } else {
             console.warn("unknown status type " + status_value.type);
@@ -178,7 +169,8 @@ var R20A = class {
             if (typeof status_value === "undefined") {
                 status_value = {
                     type: "unknown",
-                    id: active_status_id
+                    id: active_status_id,
+                    name: active_status_id
                 }
             }
 
@@ -365,7 +357,7 @@ var R20A = class {
 }
 
 function wait_for_init() {
-    if (window.Campaign?.engine?.page?.d20?.token_editor)
+    if (window.Campaign?.engine?.page?.d20?.token_editor && token_marker_array)
     {
         init();
     }
