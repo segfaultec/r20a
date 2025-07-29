@@ -104,6 +104,18 @@
     .markericon {
         margin: 0 2px 0 0;
     }
+    
+    .markercolor.dead {
+        border-radius: 0px;
+        width: auto;
+        color: #cc1010;
+        font-size: 24px;
+        font-weight: bold;
+        position: relative;
+        top: -7px;
+        padding: 0 2px 0 2px;
+        line-height: 1.5rem;
+    }
 }
 
 #r20a-markeredit {
@@ -112,7 +124,17 @@
     }
     .markercolor.dead {
         margin-right: 7px;
+        
+        border-radius: 0px;
+        width: auto;
+        color: #cc1010;
+        font-size: 24px;
+        font-weight: bold;
+        position: relative;
+        padding: 0 2px 0 2px;
+        line-height: 1.3rem;
     }
+    
 }
 
 #r20a-markeredit, #r20a-markermenu {
@@ -124,18 +146,6 @@
         border-radius: 20px;
         display: inline-block;
         border: 4px solid white;
-    }
-
-    .markercolor.dead {
-        border-radius: 0px;
-        width: auto;
-        color: #cc1010;
-        font-size: 24px;
-        font-weight: bold;
-        position: relative;
-        top: -7px;
-        padding: 0 2px 0 2px;
-        line-height: 1.5rem;
     }
 
     .markericon {
