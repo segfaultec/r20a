@@ -4,10 +4,11 @@ function on_selected_token_modified_jumper(token, new_value, event) {
 }
 
 var R20A = class {
-    engine = null
-    overlay = null
-    current_selected_tokens = []
+    engine = null;
+    overlay = null;
+    current_selected_tokens = [];
     statusicons = {};
+    log = false;
 
     // flag so we don't rerender the markermenu when typing in the edit textbox
     // gets incremented once for each token, so it decrements back to 0 when each token gets modified
@@ -283,15 +284,23 @@ var R20A = class {
             message = message.replaceAll("@","").replaceAll(",","");
         }
         this.current_selected_tokens.forEach((token) => {
-            let old_statuses = token.model.get("statusmarkers")
+            const old_statuses = token.model.get("statusmarkers");
+
+            const old_status_list = old_statuses
                 .split(",")
                 .map((s) => s.split("@")[0]);
 
-            if (typeof old_statuses.find(statusid) === "undefined") {
-                let new_statuses = old_statuses
-                    + ","
-                    + (message ? `${statusid}@${message}` : statusid);
-                    token.model.save({statusmarkers:new_statuses});
+            if (typeof old_status_list.find(statusid) === "undefined") {
+                const new_status_entry = (message ? `${statusid}@${message}` : statusid);
+
+                let new_statuses;
+                if (old_statuses) {
+                    new_statuses = old_statuses + "," + new_status_entry;
+                } else {
+                    new_statuses = new_status_entry;
+                }
+
+                this.update_token_status(token, new_statuses, "add");
             }
         });
     }
@@ -302,7 +311,7 @@ var R20A = class {
                 .split(",")
                 .filter((s) => s.split("@")[0] !== statusid)
                 .join(",");
-            token.model.save({statusmarkers:new_statuses});
+            this.update_token_status(token, new_statuses, "remove");
         });
     }
 
@@ -327,7 +336,7 @@ var R20A = class {
                     return s;
                 })
                 .join(",")
-            token.model.save({statusmarkers:new_statuses});
+            this.update_token_status(token, new_statuses, "bump");
         });
     }
 
@@ -351,8 +360,17 @@ var R20A = class {
                     }
                 })
                 .join(",");
-            token.model.save({statusmarkers:new_statuses});
+            this.update_token_status(token, new_statuses, "edit");
         });
+    }
+
+    update_token_status(token, new_status, op) {
+        if (this.log) {
+            const old_status = token.model.get("statusmarkers");
+            const name = token.model.get("name");
+            console.info(`r20a update: op:${op} token:"${name}" old:"${old_status}" new:"${new_status}"`);
+        }
+        token.model.save({statusmarkers:new_status});
     }
 }
 
