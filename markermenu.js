@@ -1,4 +1,55 @@
 
+var currentDragRow = null;
+function init_drag(root, reorder_event) {
+    for (let handle of root.querySelectorAll(".r20a-draghandle"))
+    {
+        handle.addEventListener("dragstart", (ev) => {
+    
+            currentDragRow = ev.target.parentElement;
+            currentDragRow.style.opacity = 0.3;
+    
+            ev.dataTransfer.dropEffect = "move";
+        });
+        handle.addEventListener("dragend", (ev) => {
+            currentDragRow.style.opacity = 1.0;
+    
+            Array.from(root.querySelectorAll(".r20a-dragrow"))
+                .sort((a,b)=>{return a.style.order - b.style.order;})
+                .entries()
+                .forEach(([index, row]) =>
+                {
+                    row.style.order = index * 2;
+                });
+    
+            if (typeof reorder_event === "function")
+            {
+                reorder_event(currentDragRow, currentDragRow.style.order / 2);
+            }
+
+            currentDragRow = null;
+        });
+        handle.draggable = true;
+    }
+    
+    let index = 0;
+    for (let row of root.querySelectorAll(".r20a-dragrow")) {
+        row.style.order = index * 2;
+        row.addEventListener("dragover", (ev) => {
+            ev.preventDefault();
+        });
+        row.addEventListener("dragenter", (ev) => {
+            ev.preventDefault();
+            if (currentDragRow && ev.currentTarget !== currentDragRow)
+            {
+                const currentOrder = currentDragRow.style.order;
+                const targetOrder = ev.currentTarget.style.order;
+                currentDragRow.style.order = targetOrder - Math.sign(currentOrder - targetOrder);
+            }
+        });
+        index++;
+    }
+}
+
 function on_selected_token_modified_jumper(token, new_value, event) {
     window.r20a.on_selected_token_modified(token);
 }
@@ -117,6 +168,7 @@ var R20A = class {
         markeredit.innerHTML = ""
 
         const active_statuses = {};
+        let active_statuses_length = 0;
 
         for (const token of this.current_selected_tokens) {
             if (typeof token === "undefined") {
@@ -148,6 +200,7 @@ var R20A = class {
                         message_varies: false,
                         message_numeric: false
                     };
+                    active_statuses_length++;
                 }
 
                 active_statuses[status_id].message_numeric |= Boolean(status_message.match("\\d+"));
@@ -231,7 +284,18 @@ var R20A = class {
             tokencount_label.innerText = `${active_status.token_count}/${this.current_selected_tokens.length}`;
 
             markeredit.appendChild(row);
+
+            if (active_statuses_length == 1)
+            {
+                icon.classList.remove("r20a-draghandle");
+                icon.classList.add("r20a-draghandle-disabled");
+            }
         }
+
+        init_drag(markeredit, (row_element, new_index) => {
+            const status_id = row_element.querySelector(".statusicon").dataset.tag;
+            this.reorder_status(status_id, new_index);
+        });
 
         scrollbox.scrollTop = scrollbox_top + scrollbox.scrollHeight - scrollbox_height;
     }
@@ -364,6 +428,28 @@ var R20A = class {
         });
     }
 
+    reorder_status(statusid, new_index) {
+        this.current_selected_tokens.forEach((token) => {
+            let popped_status = null;
+            let new_status = Array.from(token.model.get("statusmarkers")
+                .split(",")
+                .filter((value, index) => {
+                    if (value.split("@")[0] === statusid) {
+                        popped_status = value;
+                        return false;
+                    }
+                    return true;
+                }));
+
+            if (popped_status) {
+                new_status.insert(popped_status, new_index);
+                new_status = new_status.join(",");
+
+                this.update_token_status(token, new_status, "reorder");
+            }
+        });
+    }
+
     update_token_status(token, new_status, op) {
         if (this.log) {
             const old_status = token.model.get("statusmarkers");
@@ -389,7 +475,7 @@ function init() {
 
     window.r20a = new R20A(window.Campaign.engine)
 
-    console.log("init!")
+    console.info("r20a init!")
 }
 
 wait_for_init();
