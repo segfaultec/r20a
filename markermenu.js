@@ -202,7 +202,7 @@ var R20A = class {
     overlay = null;
     current_selected_tokens = [];
     statusicons = {};
-    log = true;
+    log = false;
 
     // flag so we don't rerender the markermenu when typing in the edit textbox
     // gets incremented once for each token, so it decrements back to 0 when each token gets modified
