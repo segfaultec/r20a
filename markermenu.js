@@ -268,7 +268,7 @@ var R20A = class {
                 input.value = active_status.message;
                 input.onclick = null
             }
-            input.onkeyup = (event) => {
+            input.oninput = (event) => {
                 this.skip_next_markermenu_update = active_status.token_count;
                 this.edit_status(active_status_id, event.target.value);
 
