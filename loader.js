@@ -25,6 +25,7 @@ var startup = () => {
             var s = document.createElement("script");
             s.id = "r20a-markermenu-script";
             s.src = browser.runtime.getURL("markermenu.js");
+            s.type = "module"
             document.head.appendChild(s);
         });
 }

@@ -21,7 +21,7 @@
 
 	"web_accessible_resources": [
 		{
-			"resources": ["markermenu.js","markermenu.html","markermenu.css"],
+			"resources": ["*.js", "markermenu.html", "markermenu.css"],
 			"matches": ["*://app.roll20.net/*"]
 		}
 	],
