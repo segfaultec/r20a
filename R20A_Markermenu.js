@@ -1,4 +1,4 @@
-import { format_statusicon } from "./markermenu.js";
+import { format_statusicon } from "./utils.js";
 import { init_drag } from "./dragging.js";
 
 export var R20A_Markermenu = class {
