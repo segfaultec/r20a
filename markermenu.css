@@ -56,6 +56,29 @@
     }
 }
 
+.r20a-lilborder {
+    border-radius: 4px;
+    border: rgb(170,170,170) solid 1px;
+
+    display: flex;
+    align-items: stretch;
+
+    > *:not(:last-child) {
+        border-right: rgb(170,170,170) solid 1px;
+    }
+
+    > div {
+        padding: 3px;
+
+        display: flex;
+        align-items: center;
+
+        > * {
+            margin: 0px;
+        }
+    }
+}
+
 .r20a-markeredit-row {
 
     display: flex;
@@ -90,8 +113,16 @@
 }
 
 #r20a-markermenu-header {
-    margin-top: 9px;
-    margin-bottom: 3px;
+    margin-top: 5px;
+    margin-bottom: 12px;
+    text-align: center;
+    border-bottom: rgb(170,170,170) solid 1px;
+    height: 0.5rem;
+
+    span {
+        background: #fff;
+        padding: 0 10px;
+    }
 }
 
 #r20a-markermenu {
@@ -119,29 +150,38 @@
 }
 
 #r20a-markeredit {
-
     display: flex;
     flex-direction: column;
+}
+
+#r20a-markeredit-stash {
+    display: flex;
+    flex-direction: row;
+}
+
+#r20a-markeredit {
 
     .markercolor {
         margin-right: 5px;
     }
     .markercolor.dead {
         margin-right: 7px;
-        
-        border-radius: 0px;
-        width: auto;
-        color: #cc1010;
-        font-size: 24px;
-        font-weight: bold;
-        position: relative;
-        padding: 0 2px 0 2px;
-        line-height: 1.3rem;
     }
     
 }
 
-#r20a-markeredit, #r20a-markermenu {
+.r20a-markeredit-row .dead {
+    border-radius: 0px;
+    width: auto;
+    color: #cc1010;
+    font-size: 24px;
+    font-weight: bold;
+    position: relative;
+    padding: 0 2px 0 2px;
+    line-height: 1.3rem;
+}
+
+.r20a-markeredit-row, #r20a-markermenu {
     font-family: "Proxima Nova","ProximaNova-Regular",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Oxygen-Sans,Ubuntu,Cantarell,"Helvetica Neue",sans-serif;
 
     .markercolor {
