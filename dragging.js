@@ -1,5 +1,5 @@
 var currentDragRow = null;
-export function init_drag(root, stash_root, reorder_event) {
+export function init_drag(root, reorder_event) {
     for (let handle of root.querySelectorAll(".r20a-draghandle")) {
         handle.addEventListener("dragstart", (ev) => {
 
@@ -42,14 +42,5 @@ export function init_drag(root, stash_root, reorder_event) {
             }
         });
         index++;
-    }
-
-    for (let row of stash_root.querySelectorAll(".r20a-dragrow")) {
-        row.addEventListener("dragover", (ev) => {
-            ev.preventDefault();
-        });
-        row.addEventListener("dragenter", (ev) => {
-            ev.preventDefault();
-        });
     }
 }

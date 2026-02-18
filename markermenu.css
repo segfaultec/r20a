@@ -29,7 +29,6 @@
 #r20a-scrollbox {
     border-top: rgb(170,170,170) solid 1px;
     padding: 5px;
-    height: 300px;
 
     overflow-y: scroll;
     resize: vertical;
@@ -152,11 +151,6 @@
 #r20a-markeredit {
     display: flex;
     flex-direction: column;
-}
-
-#r20a-markeredit-stash {
-    display: flex;
-    flex-direction: row;
 }
 
 #r20a-markeredit {

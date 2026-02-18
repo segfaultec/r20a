@@ -8,10 +8,8 @@ export var R20A_Markermenu = class {
         this.controller = controller;
         this.scrollbox = overlay.querySelector("details");
         this.row_template = document.getElementById("r20a-template-markeredit-row");
-        this.row_template_stash = document.getElementById("r20a-template-markeredit-stash-row");
 
         this.markeredit = document.getElementById("r20a-markeredit");
-        this.markeredit_stash = document.getElementById("r20a-markeredit-stash");
 
         this.skip_next_markermenu_update = 0;
     }
@@ -134,34 +132,6 @@ export var R20A_Markermenu = class {
         this.markeredit.appendChild(row);
     }
 
-    add_stash_row(active_status_id, active_status, total_count) {
-        let status_value = this.controller.statusicons[active_status_id];
-
-        if (typeof status_value === "undefined") {
-            status_value = {
-                type: "unknown",
-                id: active_status_id,
-                name: active_status_id
-            };
-        }
-
-        let row = this.row_template_stash.content.cloneNode(true);
-
-        let message_element = row.querySelector(".r20a-status-stashmessage");
-        if (active_status.message_varies) {
-            message_element.innerText = "<varies>";
-        } else {
-            message_element.innerText = active_status.message;
-        }
-
-        let icon = row.querySelector(".statusicon");
-        let tokencount_label = row.querySelector(".r20a-status-tokencount");
-        format_statusicon(icon, active_status_id, status_value);
-        tokencount_label.innerText = `${active_status.token_count}/${total_count}`;
-
-        this.markeredit_stash.appendChild(row);
-    }
-
     save_scrollbox() {
         this.scrollbox_top = this.scrollbox.scrollTop;
         this.scrollbox_height = this.scrollbox.scrollHeight;
@@ -180,10 +150,8 @@ export var R20A_Markermenu = class {
         this.save_scrollbox();
 
         this.markeredit.innerHTML = "";
-        this.markeredit_stash.innerHTML = "";
 
         let active_statuses = this.collect_statuses(current_selected_tokens, "statusmarkers");
-        let stashed_statuses = this.collect_statuses(current_selected_tokens, "statusmarkers_r20a_stash");
 
         // this is ugly, replace
         for (const status_id in this.controller.statusicons) {
@@ -201,20 +169,7 @@ export var R20A_Markermenu = class {
             this.add_row(active_status_id, active_status, current_selected_tokens.length);
         }
 
-        // todo use class with query
-        if (Object.keys(stashed_statuses).length > 0) {
-            document.getElementById("r20a-markermenu-stash-container").style.display = "block";
-        } else {
-            document.getElementById("r20a-markermenu-stash-container").style.display = "none";
-        }
-
-        for (const stashed_status_id in stashed_statuses) {
-            const stashed_status = stashed_statuses[stashed_status_id];
-
-            this.add_stash_row(stashed_status_id, stashed_status, current_selected_tokens.length);
-        }
-
-        init_drag(this.markeredit, this.markeredit_stash, (row_element, new_index) => {
+        init_drag(this.markeredit, (row_element, new_index) => {
             const status_id = row_element.querySelector(".statusicon").dataset.tag;
             this.controller.reorder_status(status_id, new_index);
         });

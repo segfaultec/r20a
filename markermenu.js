@@ -109,7 +109,6 @@ var R20A = class {
         this.current_selected_tokens.forEach((old_token) => {
             old_token.model.unbind("change:name", on_selected_token_modified_jumper)
             old_token.model.unbind("change:statusmarkers", on_selected_token_modified_jumper)
-            old_token.model.unbind("change:statusmarkers_r20a_stash", on_selected_token_modified_jumper)
         });
 
         if (selected_tokens.length > 0)
@@ -130,7 +129,6 @@ var R20A = class {
         this.current_selected_tokens.forEach((new_token) => {
             new_token.model.bind("change:name", on_selected_token_modified_jumper);
             new_token.model.bind("change:statusmarkers", on_selected_token_modified_jumper);
-            new_token.model.bind("change:statusmarkers_r20a_stash", on_selected_token_modified_jumper);
         });
     }
 
@@ -164,26 +162,6 @@ var R20A = class {
     reorder_status(statusid, new_index, model_key = "statusmarkers") {
         this.current_selected_tokens.forEach((token) => {
             R20A_StatusEditor.from_token(token, model_key).reorder_status(statusid, new_index);
-        });
-    }
-
-    stash_status(statusid) {
-        this.current_selected_tokens.forEach((token) => {
-            let removed = R20A_StatusEditor.from_token(token, "statusmarkers").remove_status(statusid);
-            removed.forEach((s) => {
-                let s_split = s.split("@");
-                R20A_StatusEditor.from_token(token, "statusmarkers_r20a_stash").add_status(s_split[0], s_split[1]);
-            })
-        });
-    }
-
-    unstash_status(statusid) {
-        this.current_selected_tokens.forEach((token) => {
-            let removed = R20A_StatusEditor.from_token(token, "statusmarkers_r20a_stash").remove_status(statusid);
-            removed.forEach((s) => {
-                let s_split = s.split("@");
-                R20A_StatusEditor.from_token(token, "statusmarkers").add_status(s_split[0], s_split[1]);
-            })
         });
     }
 }
