@@ -19,12 +19,12 @@ var startup = () => {
             l.id = "r20a-markermenu-css"
             l.rel = "stylesheet";
             l.type = "text/css"
-            l.href = browser.runtime.getURL("markermenu.css");
+            l.href = browser.runtime.getURL("markermenu.css") + "?w=" + Date.now();
             document.head.appendChild(l);
 
             var s = document.createElement("script");
             s.id = "r20a-markermenu-script";
-            s.src = browser.runtime.getURL("markermenu.js");
+            s.src = browser.runtime.getURL("markermenu.js") + "?w=" + Date.now();
             s.type = "module"
             document.head.appendChild(s);
         });
