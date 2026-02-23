@@ -75,7 +75,6 @@ export var R20A_SettingsManager = class {
         browser.storage.local.get({ "settings": "" })
             .then(
                 (results) => {
-                    console.log("loadFromStorage success")
                     const settings = new R20A_SettingsManager();
                     settings.deserialize(results.settings)
                     settings.saveToStorage()
@@ -86,7 +85,7 @@ export var R20A_SettingsManager = class {
                     return settings;
                 },
                 (err) => {
-                    console.log("r20a: Error getting storage");
+                    console.error("r20a: Error getting storage");
                     console.error(err);
                 }
             );

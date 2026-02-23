@@ -26,7 +26,7 @@ var receiveMessage = (event) => {
 }
 
 var startup = () => {
-    console.log("r20a loader");
+    console.info("r20a loader");
 
     window.addEventListener("message", receiveMessage);
 
