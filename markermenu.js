@@ -61,6 +61,12 @@ var R20A = class {
         }
 
         this.markermenu = new R20A_Markermenu(this, this.overlay);
+
+        let scrollbox = document.getElementById("r20a-scrollbox");
+        if (scrollbox)
+        {
+            scrollbox.onresize = 
+        }
     }
 
     get_label(suffix) {

@@ -1,14 +1,16 @@
 <div id="r20a-overlay" style="position: absolute; display: none;z-index:10">
     <div id="r20a-overlay-inner">
-        <details>
+        <details open>
             <summary><h1>r20a</h1></summary>
            
-            <div id="r20a-scrollbox">
+            <div id="r20a-scrollbox", style="height: 400px">
                 <h2><span id="r20a-label-tokencount">0 tokens</span></h2>
                 <div id="r20a-markeredit" class="r20a-active-markermenu">
                 </div>
-                <p id="r20a-markermenu-header"><span>Click to toggle:</span></p>
-                <div id="r20a-markermenu">
+                <div class="r20a-spacer"></div>
+                <div id="r20a-markermenu-container">
+                    <p id="r20a-markermenu-header"><span>Click to toggle:</span></p>
+                    <div id="r20a-markermenu">
                 </div>
             </div>
         </details>
@@ -20,7 +22,7 @@
                     <p><span class="r20a-status-tokencount"></span></p>
                     <button class="btn r20a-btn-remove">Del All</button>
                 </div>
-                <div class="r20a-border">
+                <div class="r20a-border r20a-input-message-container">
                     <input type="text" placeholder="Message" class="r20a-input-message">
                 
                     <button class="btn r20a-btn-dec">-</button>
