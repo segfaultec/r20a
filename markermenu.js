@@ -1,9 +1,18 @@
 import { format_statusicon } from "./utils.js";
 import { R20A_Markermenu } from "./R20A_Markermenu.js";
 import { R20A_StatusEditor } from "./R20A_StatusEditor.js";
+import { R20A_SettingsManager } from "./R20A_SettingsManager.js";
 
 function on_selected_token_modified_jumper(token, new_value, event) {
     window.r20a.on_selected_token_modified(token);
+}
+
+function sendContentScriptMessage(payload) {
+    window.postMessage({
+        extension: "r20a",
+        direction: "page-to-content",
+        payload: payload
+    });
 }
 
 var R20A = class {
@@ -13,12 +22,10 @@ var R20A = class {
     statusicons = {};
     log = false;
     markermenu = null;
-
-    // flag so we don't rerender the markermenu when typing in the edit textbox
-    // gets incremented once for each token, so it decrements back to 0 when each token gets modified
-    skip_next_markermenu_update = 0;
+    scrollbox = null;
 
     constructor(engine) {
+
         this.engine = engine
         this.overlay = document.getElementById("r20a-overlay");
 
@@ -62,11 +69,20 @@ var R20A = class {
 
         this.markermenu = new R20A_Markermenu(this, this.overlay);
 
-        let scrollbox = document.getElementById("r20a-scrollbox");
-        if (scrollbox)
-        {
-            scrollbox.onresize = 
+        this.scrollbox = this.overlay.querySelector("#r20a-scrollbox")
+        this.scrollbox.addEventListener("mouseup", this.save_scrollbox_height)
+
+        window.addEventListener(R20A_SettingsManager.LoadedEventName, (event) => {
+            window.r20a_settings = new R20A_SettingsManager()
+            window.r20a_settings.deserialize(event.detail)
+            this.on_settings_loaded(window.r20a_settings)
+        })
+        if (window.r20a_settings !== undefined) {
+            this.on_settings_loaded(window.r20a_settings)
+        } else {
+            sendContentScriptMessage({"type":"get_settings"});
         }
+
     }
 
     get_label(suffix) {
@@ -169,6 +185,30 @@ var R20A = class {
         this.current_selected_tokens.forEach((token) => {
             R20A_StatusEditor.from_token(token, model_key).reorder_status(statusid, new_index);
         });
+    }
+
+    on_settings_loaded(settings) {
+        if (this.scrollbox)
+        {
+            this.scrollbox.style.height = `${settings.scrollbox_height}px`
+        }
+    }
+
+    save_scrollbox_height() {
+
+        const height_px = window.r20a.scrollbox.style.height
+        const height = parseFloat(height_px)
+
+        if (height == window.r20a_settings.scrollbox_height) {
+            return;
+        }
+
+        window.r20a_settings.scrollbox_height = height
+        this.save_settings()
+    }
+
+    save_settings() {
+        sendContentScriptMessage({type:"set_settings", settings: window.r20a_settings.serialize()})
     }
 }
 

@@ -1,10 +1,34 @@
+import { R20A_SettingsManager } from "./R20A_SettingsManager.js";
 
 if (typeof browser === "undefined") {
     var browser = chrome;
 }
 
+var receiveMessage = (event) => {
+    if (event.source === window
+        && event.data.extension === "r20a"
+        && event.data.direction === "page-to-content")
+    {
+        if (event.data.payload.type === "set_settings")
+        {
+            let newsettings = new R20A_SettingsManager()
+            if (newsettings.deserialize(event.data.payload.settings))
+            {
+                window.r20a_settings = newsettings
+                window.r20a_settings.saveToStorage()
+            }
+        }
+        else if (event.data.payload.type === "get_settings")
+        {
+            window.r20a_settings.sendLoadedEvent();
+        }
+    }
+}
+
 var startup = () => {
-    console.log("loader");
+    console.log("r20a loader");
+
+    window.addEventListener("message", receiveMessage);
 
     document.getElementById("r20a-markermenu-css")?.remove();
     document.getElementById("r20a-markermenu-script")?.remove();
@@ -28,6 +52,8 @@ var startup = () => {
             s.type = "module"
             document.head.appendChild(s);
         });
+
+    R20A_SettingsManager.loadFromStorage()
 }
 
 if (document.readyState === 'complete')
