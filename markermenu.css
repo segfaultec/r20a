@@ -1,6 +1,8 @@
 #r20a-overlay {
     position: absolute;
-    z-index: 10;
+     /*should be over everything r20 has
+      we may have won the z-index battle but not the z-index war*/
+    z-index: 100000;
 }
 
 #r20a-overlay-inner {

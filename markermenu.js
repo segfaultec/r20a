@@ -72,7 +72,7 @@ var R20A = class {
         this.markermenu = new R20A_Markermenu(this, this.overlay);
 
         this.scrollbox = this.overlay.querySelector("#r20a-scrollbox")
-        this.scrollbox.addEventListener("mouseup", this.save_scrollbox_height)
+        this.scrollbox.addEventListener("mouseup", this.save_scrollbox_height.bind(this))
 
         window.addEventListener(R20A_SettingsManager.LoadedEventName, (event) => {
             window.r20a_settings = new R20A_SettingsManager()
@@ -86,9 +86,7 @@ var R20A = class {
         }
 
         const draghandle = this.overlay.querySelector("#r20a-overlay-drag-grip")
-        this.overlay_dragpositioning = new DragPositioningHandler(this.overlay, draghandle,
-            (position) => { this.save_overlay_position(position); }
-        )
+        this.overlay_dragpositioning = new DragPositioningHandler(this.overlay, draghandle, this.save_overlay_position.bind(this))
     }
 
     get_label(suffix) {
@@ -194,10 +192,7 @@ var R20A = class {
         {
             this.scrollbox.style.height = `${settings.scrollbox_height}px`
         }
-        if (this.overlay) {
-            this.overlay.style.left = `${settings.overlay_x}px`
-            this.overlay.style.up = `${settings.overlay_y}px`
-        }
+        this.overlay_dragpositioning?.apply_position([settings.overlay_x, settings.overlay_y])
     }
 
     save_scrollbox_height() {
