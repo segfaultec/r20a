@@ -55,6 +55,10 @@ export var DragPositioningHandler = class {
     constructor(root, handle, onfinished) {
         this.root = root;
         this.onfinished = onfinished;
+        // Prevent handle click from toggling the details panel
+        handle.addEventListener("click", (event) => {
+            event.preventDefault();
+        })
         handle.addEventListener("mousedown", this.mousedown_handler.bind(this), true);
         document.addEventListener("mouseup", this.mouseup_handler.bind(this), true);
         document.addEventListener("mousemove", this.mousemove_handler.bind(this), true);
