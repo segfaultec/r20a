@@ -1,3 +1,8 @@
+#r20a-overlay {
+    position: absolute;
+    z-index: 10;
+}
+
 #r20a-overlay-inner {
     background-color: white;
     font-family: Nunito,sans-serif;
@@ -5,24 +10,47 @@
     border: rgb(170,170,170) solid 1px;
     
     summary {
-        display: block;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+    }
+
+    details > summary > * {
+        margin: 0 0 0 5px;
+    }
+
+    details > summary > *:last-child {
+        margin: 0 5px 0 5px;
     }
 
     details > summary > h1 {
-        margin: 0 5px 0 5px;
         display: inline;
         font-size: 24px;
         font-weight: bold;
     }
 
-    details > summary::before {
+    details > summary > .cursor::before {
         content: '⯈';
         font-size: 24px;
+        width: 20px;
+        height: 20px;
     }
     
-    details[open] > summary::before {
+    details[open] > summary > .cursor::before {
         content: '⯆';
-        font-size: 24px;
+    }
+
+    .drag-grip {
+        width: 20px;
+        height: 20px;
+        display: inline-block;
+        cursor: move;
+        color: #666;
+        background-color: #ccc;
+
+        text-align: center;
+        font-size: 16px;
+        line-height: 16px;
     }
 }
 

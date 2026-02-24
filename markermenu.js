@@ -2,6 +2,7 @@ import { format_statusicon } from "./utils.js";
 import { R20A_Markermenu } from "./R20A_Markermenu.js";
 import { R20A_StatusEditor } from "./R20A_StatusEditor.js";
 import { R20A_SettingsManager } from "./R20A_SettingsManager.js";
+import { DragPositioningHandler } from "./dragging.js";
 
 function on_selected_token_modified_jumper(token, new_value, event) {
     window.r20a.on_selected_token_modified(token);
@@ -23,6 +24,7 @@ var R20A = class {
     log = false;
     markermenu = null;
     scrollbox = null;
+    overlay_dragpositioning = null
 
     constructor(engine) {
 
@@ -83,16 +85,16 @@ var R20A = class {
             sendContentScriptMessage({"type":"get_settings"});
         }
 
+        const draghandle = this.overlay.querySelector("#r20a-overlay-drag-grip")
+        this.overlay_dragpositioning = new DragPositioningHandler(this.overlay, draghandle)
     }
 
     get_label(suffix) {
         return document.getElementById("r20a-label-" + suffix);
     }
 
-    show_token_editor(screen_x, screen_y, tokens) {
+    show_token_editor(tokens) {
         this.overlay.style.display = "block";
-        this.overlay.style.left = `${screen_x}px`;
-        this.overlay.style.top = `${screen_y}px`;
 
         let tokenstr;
         if (tokens.length != 1) {
@@ -137,9 +139,7 @@ var R20A = class {
         {
             this.current_selected_tokens = selected_tokens;
 
-            var average_screen_pos_x = 70.0;
-            var average_screen_pos_y = 90.0;
-            this.show_token_editor(average_screen_pos_x, average_screen_pos_y, selected_tokens);
+            this.show_token_editor(selected_tokens);
             this.update_token_editor_markermenu();
         }
         else if (selected_tokens.length == 0)

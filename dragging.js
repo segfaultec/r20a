@@ -44,3 +44,30 @@ export function init_drag(root, reorder_event) {
         index++;
     }
 }
+
+export var DragPositioningHandler = class {
+    offset = [0,0]
+    isDown = false
+    root = null
+
+    constructor(root, handle) {
+        this.root = root;
+        var handler_this = this;
+        handle.addEventListener("mousedown", (event) => {
+            handler_this.isDown = true;
+            handler_this.offset = [
+                handler_this.root.offsetLeft - event.clientX,
+                handler_this.root.offsetTop - event.clientY
+            ]
+        }, true)
+        document.addEventListener("mouseup", (event) => {
+            handler_this.isDown = false;
+        }, true)
+        document.addEventListener("mousemove", (event) => {
+            if (handler_this.isDown) {
+                handler_this.root.style.left = (event.clientX + handler_this.offset[0]) + "px";
+                handler_this.root.style.top = (event.clientY + handler_this.offset[1]) + "px";
+            }
+        }, true)
+    }
+}
