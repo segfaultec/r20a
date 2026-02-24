@@ -86,7 +86,9 @@ var R20A = class {
         }
 
         const draghandle = this.overlay.querySelector("#r20a-overlay-drag-grip")
-        this.overlay_dragpositioning = new DragPositioningHandler(this.overlay, draghandle)
+        this.overlay_dragpositioning = new DragPositioningHandler(this.overlay, draghandle,
+            (position) => { this.save_overlay_position(position); }
+        )
     }
 
     get_label(suffix) {
@@ -192,6 +194,10 @@ var R20A = class {
         {
             this.scrollbox.style.height = `${settings.scrollbox_height}px`
         }
+        if (this.overlay) {
+            this.overlay.style.left = `${settings.overlay_x}px`
+            this.overlay.style.up = `${settings.overlay_y}px`
+        }
     }
 
     save_scrollbox_height() {
@@ -205,6 +211,20 @@ var R20A = class {
 
         window.r20a_settings.scrollbox_height = height
         this.save_settings()
+    }
+
+    save_overlay_position(position) {
+        const x = position[0]
+        const y = position[1]
+        if (x == window.r20a_settings.overlay_x
+            && y == window.r20a_settings.overlay_y
+        ) {
+            return;
+        }
+
+        window.r20a_settings.overlay_x = x;
+        window.r20a_settings.overlay_y = y;
+        this.save_settings();
     }
 
     save_settings() {

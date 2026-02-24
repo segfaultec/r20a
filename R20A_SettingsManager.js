@@ -1,9 +1,13 @@
 const valid_settings = [
-    "scrollbox_height"
+    "scrollbox_height",
+    "overlay_x",
+    "overlay_y"
 ]
 
 export var R20A_SettingsManager = class {
     scrollbox_height = 400;
+    overlay_x = 70;
+    overlay_y = 90;
 
     constructor() {}
 
@@ -52,7 +56,7 @@ export var R20A_SettingsManager = class {
 
         this[setting_key] = setting_value;
 
-        console.info(`received value ${setting_key}:${setting_value}`)
+        //console.info(`received value ${setting_key}:${setting_value}`)
 
         return true;
     }
