@@ -25,6 +25,7 @@ var R20A = class {
     markermenu = null;
     scrollbox = null;
     overlay_dragpositioning = null
+    overlay_detailspanel = null
 
     constructor(engine) {
 
@@ -87,6 +88,14 @@ var R20A = class {
 
         const draghandle = this.overlay.querySelector("#r20a-overlay-drag-grip")
         this.overlay_dragpositioning = new DragPositioningHandler(this.overlay, draghandle, this.save_overlay_position.bind(this))
+
+        this.overlay_detailspanel = this.overlay.querySelector("details")
+
+        const togglebutton = this.overlay.querySelector("#r20a-overlay-togglebutton")
+        togglebutton.addEventListener("click", (event) => {
+            this.set_detailspanel_open(!this.overlay_detailspanel.open, true);
+        })
+
     }
 
     get_label(suffix) {
@@ -192,6 +201,10 @@ var R20A = class {
         {
             this.scrollbox.style.height = `${settings.scrollbox_height}px`
         }
+        if (this.overlay_detailspanel)
+        {
+            this.set_detailspanel_open(settings.overlay_open, false)
+        }
         this.overlay_dragpositioning?.apply_position([settings.overlay_x, settings.overlay_y])
     }
 
@@ -220,6 +233,19 @@ var R20A = class {
         window.r20a_settings.overlay_x = x;
         window.r20a_settings.overlay_y = y;
         this.save_settings();
+    }
+
+    set_detailspanel_open(open, savesettings) {
+        if (open) {
+            this.overlay_detailspanel.open = true;
+        } else {
+            this.overlay_detailspanel.removeAttribute("open");
+        }
+
+        if (savesettings) {
+            window.r20a_settings.overlay_open = open;
+            this.save_settings();
+        }
     }
 
     save_settings() {
