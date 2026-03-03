@@ -11,9 +11,29 @@
                 <div id="r20a-markeredit" class="r20a-active-markermenu">
                 </div>
                 <div class="r20a-spacer"></div>
-                <div id="r20a-markermenu-container">
-                    <p id="r20a-markermenu-header"><span>Click to toggle:</span></p>
-                    <div id="r20a-markermenu">
+
+                <div class="r20a-tabs">
+                    <div role="tablist">
+                        <button id="tab-statuses" role="tab" aria-selected="true"><p>Statuses</p></button>
+                        <button id="tab-favourites" role="tab" aria-selected="false"><p>Favourites</p></button>
+                    </div>
+                    <div class="tabpanel-container">
+                        <div id="tabpanel-favourites" role="tabpanel" class="tabs-hidden" aria-labelledby="tab-favourites">
+                            <div class="r20a-markermenu-container">
+                                <p class="r20a-markermenu-header"><span>Favourites:</span></p>      
+                                <div class="r20a-markermenu">
+                                </div>
+
+                            </div>
+                        </div>
+                        <div id="tabpanel-statuses" class="tabroot" role="tabpanel" aria-labelledby="tab-statuses">
+                            <div class="r20a-markermenu-container">
+                                <p class="r20a-markermenu-header"><span>Click to toggle:</span></p>
+                                <div class="r20a-markermenu" id="r20a-markermenu"></div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </details>

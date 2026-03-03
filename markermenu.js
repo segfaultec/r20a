@@ -1,8 +1,11 @@
+"use strict";
+
 import { format_statusicon } from "./utils.js";
 import { R20A_Markermenu } from "./R20A_Markermenu.js";
 import { R20A_StatusEditor } from "./R20A_StatusEditor.js";
 import { R20A_SettingsManager } from "./R20A_SettingsManager.js";
 import { DragPositioningHandler } from "./dragging.js";
+import { R20A_Tabs } from "./R20A_Tabs.js";
 
 function on_selected_token_modified_jumper(token, new_value, event) {
     window.r20a.on_selected_token_modified(token);
@@ -95,6 +98,10 @@ var R20A = class {
         togglebutton.addEventListener("click", (event) => {
             this.set_detailspanel_open(!this.overlay_detailspanel.open, true);
         })
+
+        for (let tabsRoot of this.overlay.querySelectorAll(".r20a-tabs")) {
+            new R20A_Tabs(tabsRoot)
+        }
 
     }
 
