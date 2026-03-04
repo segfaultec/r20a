@@ -29,6 +29,7 @@ var R20A = class {
     scrollbox = null;
     overlay_dragpositioning = null
     overlay_detailspanel = null
+    tabsmanager = null
 
     constructor(engine) {
 
@@ -78,6 +79,11 @@ var R20A = class {
         this.scrollbox = this.overlay.querySelector("#r20a-scrollbox")
         this.scrollbox.addEventListener("mouseup", this.save_scrollbox_height.bind(this))
 
+        let tabsRoot = this.overlay.querySelector(".r20a-tabs")
+        if (tabsRoot) {
+            this.tabsmanager = new R20A_Tabs(tabsRoot, this.save_tabs_index.bind(this));
+        }
+
         window.addEventListener(R20A_SettingsManager.LoadedEventName, (event) => {
             window.r20a_settings = new R20A_SettingsManager()
             window.r20a_settings.deserialize(event.detail)
@@ -98,11 +104,6 @@ var R20A = class {
         togglebutton.addEventListener("click", (event) => {
             this.set_detailspanel_open(!this.overlay_detailspanel.open, true);
         })
-
-        for (let tabsRoot of this.overlay.querySelectorAll(".r20a-tabs")) {
-            new R20A_Tabs(tabsRoot)
-        }
-
     }
 
     get_label(suffix) {
@@ -213,6 +214,8 @@ var R20A = class {
             this.set_detailspanel_open(settings.overlay_open, false)
         }
         this.overlay_dragpositioning?.apply_position([settings.overlay_x, settings.overlay_y])
+        
+        this.tabsmanager?.setSelectedTab(settings.tab_index);
     }
 
     save_scrollbox_height() {
@@ -239,6 +242,15 @@ var R20A = class {
 
         window.r20a_settings.overlay_x = x;
         window.r20a_settings.overlay_y = y;
+        this.save_settings();
+    }
+
+    save_tabs_index(index) {
+        if (index == window.r20a_settings.tab_index) {
+            return;
+        }
+
+        window.r20a_settings.tab_index = index;
         this.save_settings();
     }
 

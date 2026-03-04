@@ -2,7 +2,8 @@ const valid_settings = [
     "scrollbox_height",
     "overlay_x",
     "overlay_y",
-    "overlay_open"
+    "overlay_open",
+    "tab_index"
 ]
 
 export var R20A_SettingsManager = class {
@@ -10,6 +11,7 @@ export var R20A_SettingsManager = class {
     overlay_x = 70;
     overlay_y = 90;
     overlay_open = false;
+    tab_index = 0;
 
     constructor() {}
 
