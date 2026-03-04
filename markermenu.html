@@ -20,10 +20,8 @@
                     <div class="tabpanel-container">
                         <div id="tabpanel-favourites" role="tabpanel" class="tabs-hidden" aria-labelledby="tab-favourites">
                             <div class="r20a-markermenu-container">
-                                <p class="r20a-markermenu-header"><span>Favourites:</span></p>      
-                                <div class="r20a-markermenu">
-                                </div>
-
+                                <p class="r20a-markermenu-header"><span>Click to toggle:</span></p>   
+                                <div class="r20a-favouritemenu" id="r20a-favouritemenu"></div>
                             </div>
                         </div>
                         <div id="tabpanel-statuses" class="tabroot" role="tabpanel" aria-labelledby="tab-statuses">
@@ -53,6 +51,14 @@
                 </div>
                 
             </div>
+        </template>
+        <template id="r20a-template-favouriteentry">
+            <div class="r20a-favouriteentry">
+                <div class="statusicon markercolor" style="background-color: rgb(201, 16, 16);" title="red">
+                </div>
+                <span class="r20a-text">Abcdefg</span>
+                <button class="r20a-closebtn">X</button>
+            </div> 
         </template>
     </div>
     
