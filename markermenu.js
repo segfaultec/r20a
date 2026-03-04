@@ -21,6 +21,7 @@ function sendContentScriptMessage(payload) {
 
 var R20A = class {
     engine = null;
+    settings = null;
     overlay = null;
     current_selected_tokens = [];
     statusicons = {};
@@ -31,9 +32,10 @@ var R20A = class {
     overlay_detailspanel = null
     tabsmanager = null
 
-    constructor(engine) {
+    constructor(engine, settings) {
 
         this.engine = engine
+        this.settings = settings
         this.overlay = document.getElementById("r20a-overlay");
 
         const r20a_this = this;
@@ -94,7 +96,7 @@ var R20A = class {
             this.set_detailspanel_open(!this.overlay_detailspanel.open, true);
         })
 
-        this.update_from_settings(window.r20a_settings);
+        this.update_from_settings(this.settings);
     }
 
     get_label(suffix) {
@@ -214,34 +216,34 @@ var R20A = class {
         const height_px = window.r20a.scrollbox.style.height
         const height = parseFloat(height_px)
 
-        if (height == window.r20a_settings.scrollbox_height) {
+        if (height == this.settings.scrollbox_height) {
             return;
         }
 
-        window.r20a_settings.scrollbox_height = height
+        this.settings.scrollbox_height = height
         this.save_settings()
     }
 
     save_overlay_position(position) {
         const x = position[0]
         const y = position[1]
-        if (x == window.r20a_settings.overlay_x
-            && y == window.r20a_settings.overlay_y
+        if (x == this.settings.overlay_x
+            && y == this.settings.overlay_y
         ) {
             return;
         }
 
-        window.r20a_settings.overlay_x = x;
-        window.r20a_settings.overlay_y = y;
+        this.settings.overlay_x = x;
+        this.settings.overlay_y = y;
         this.save_settings();
     }
 
     save_tabs_index(index) {
-        if (index == window.r20a_settings.tab_index) {
+        if (index == this.settings.tab_index) {
             return;
         }
 
-        window.r20a_settings.tab_index = index;
+        this.settings.tab_index = index;
         this.save_settings();
     }
 
@@ -253,13 +255,13 @@ var R20A = class {
         }
 
         if (savesettings) {
-            window.r20a_settings.overlay_open = open;
+            this.settings.overlay_open = open;
             this.save_settings();
         }
     }
 
     save_settings() {
-        sendContentScriptMessage({type:"set_settings", settings: window.r20a_settings.serialize()})
+        sendContentScriptMessage({type:"set_settings", settings: this.settings.serialize()})
     }
 }
 
@@ -301,10 +303,13 @@ async function load_settings() {
 
 async function init() {
 
-    await wait_for_init();
-    window.r20a_settings = await load_settings();
-    
-    window.r20a = new R20A(window.Campaign.engine)
+    let settings = null
+    let settings_promise = load_settings().then((s) => {settings = s;})
+    let wait_promise = wait_for_init();
+
+    await Promise.all([settings_promise, wait_promise])
+
+    window.r20a = new R20A(window.Campaign.engine, settings)
 
     console.info("r20a init!")
 }
