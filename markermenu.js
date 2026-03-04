@@ -99,7 +99,6 @@ var R20A = class {
         })
 
         this.favouritesmenu = new R20A_FavouritesMenu(this, this.overlay);
-        this.favouritesmenu.update();
 
         this.update_from_settings(this.settings);
     }
@@ -126,6 +125,7 @@ var R20A = class {
 
     update_token_editor_markermenu() {
         this.markermenu.update(this.current_selected_tokens);
+        this.favouritesmenu.update();
     }
 
     on_selected_token_modified(token) {
@@ -194,6 +194,9 @@ var R20A = class {
         this.current_selected_tokens.forEach((token) => {
             R20A_StatusEditor.from_token(token, model_key).edit_status(statusid, new_message);
         });
+
+        this.markermenu.current_active_statuses[statusid].message = new_message;
+        this.update_favourites();
     }
 
     reorder_status(statusid, new_index, model_key = "statusmarkers") {
@@ -267,6 +270,15 @@ var R20A = class {
 
     save_settings() {
         sendContentScriptMessage({type:"set_settings", settings: this.settings.serialize()})
+    }
+
+    update_favourites() {
+        this.markermenu.update_favourited_markers();
+        this.favouritesmenu.update_used_favourites();
+    }
+
+    get_current_active_statuses() {
+        return this.markermenu.current_active_statuses;
     }
 }
 

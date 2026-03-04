@@ -30,7 +30,7 @@ export function parse_single_status(status) {
     }
     const status_message = split[1] ? split[1] : "";
 
-    return {id: status_id, message: status_message, raw: status};
+    return {id: status_id, message: status_message};
 }
 
 export function parse_statuses(statuses) {

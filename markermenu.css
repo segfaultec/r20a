@@ -102,6 +102,22 @@
 
     .statusicon {
         box-sizing: content-box;
+
+        position: relative;
+
+        .r20a-favouriteicon {
+            width: 18px;
+            height: 18px;
+            position: absolute;
+            top: -6px;
+            right: -6px;
+
+            display: none;
+        }
+    }
+
+    .statusicon.favourited .r20a-favouriteicon {
+        display: inherit;
     }
 
     button {
@@ -138,10 +154,15 @@
     }
 }
 
-.r20a-markermenu {
+.r20a-markermenu, .r20a-favouritemenu {
     .statusicon {
         cursor: pointer;
     }
+}
+
+
+.r20a-markermenu {
+    
     .markercolor {
         margin: 5px 2px 0 2px;
     }
@@ -258,6 +279,7 @@
 
         .r20a-text {
             padding: 1px 3px 1px 3px;
+            height: 20px;
         }
 
         .r20a-closebtn {

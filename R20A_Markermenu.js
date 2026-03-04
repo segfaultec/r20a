@@ -134,8 +134,16 @@ export var R20A_Markermenu = class {
         tokencount_label.innerText = `${active_status.token_count}/${total_count}`;
 
         icon.ondblclick = (event) => {
-            // Save the first raw as a favourite, dunno how else to handle varying messages
-            this.controller.favouritesmenu.add_favourite(active_status.raws[0]);
+
+            const favourited = event.currentTarget.classList.contains("favourited");
+
+            if (favourited) {
+                this.controller.favouritesmenu.remove_favourite(active_status_id, active_status.message);
+            }
+            else {
+                this.controller.favouritesmenu.add_favourite(active_status_id, active_status.message);
+            }
+
             this.update_favourited_markers();
         }
 

@@ -5,6 +5,7 @@ export var R20A_FavouritesMenu = class {
     controller = null
     menu = null
     entry_template = null
+    current_favourites = []
 
     constructor(controller, overlay) {
         this.controller = controller;
@@ -19,15 +20,38 @@ export var R20A_FavouritesMenu = class {
     set_current_statuses(new_favourites) {
         this.controller.settings.favourite_statuses = new_favourites;
         this.controller.save_settings();
+        this.controller.update_favourites();
         this.update();
     }
 
     update_used_favourites() {
+        const active_statuses = this.controller.get_current_active_statuses();
 
+        for (const fav of this.current_favourites) {
+
+            let active = false;
+
+            const active_fav = active_statuses[fav.id];
+            if (active_fav !== undefined) {
+                if (!active_fav.message_varies && active_fav.message == fav.message) {
+                    active = true;
+                }
+            }
+
+            if (active)
+            {
+                fav.icon_element.classList.add("active");
+            }
+            else
+            {
+                fav.icon_element.classList.remove("active");
+            }
+        }
     }
 
     update() {
         this.menu.innerHTML = ""
+        this.current_favourites = []
 
         for (const status of parse_statuses(this.get_current_statuses())) {
             let entry = this.entry_template.content.cloneNode(true);
@@ -46,45 +70,50 @@ export var R20A_FavouritesMenu = class {
 
             format_statusicon(statusicon, status.id, status_value);
 
+            statusicon.onclick = (event) => {
+                let active = event.currentTarget.classList.contains("active");
+                if (active) {
+                    this.controller.remove_status(status.id)
+                } else {
+                    this.controller.add_status(status.id, status.message)
+                }
+            }
+
             text.innerText = status.message;
 
             closebtn.onclick = (event) => {
-                this.remove_favourite(unparse_single_status(status));
+                this.remove_favourite(status.id, status.message);
             }
 
             this.menu.appendChild(entry);
+
+            this.current_favourites.push({
+                id: status.id,
+                message: status.message,
+                icon_element: statusicon
+            });
         }
 
         this.update_used_favourites();
     }
 
-    add_favourite(new_fav) {
-        let new_fav_formatted = parse_single_status(new_fav)
+    add_favourite(fav_id, fav_message) {
+        let new_fav_formatted = {id: fav_id, message: fav_message}
         let formatted = parse_statuses(this.get_current_statuses())
-
-        let found = false;
-        for (let idx = 0; idx < formatted.length; idx++) {
-            if (formatted[idx].id === new_fav_formatted.id) {
-                found = true;
-                formatted[idx].message = new_fav_formatted.message;
-                break;
-            }
-        }
-
-        if (!found) {
-            formatted.push(new_fav_formatted)
-        }
+        formatted.push(new_fav_formatted)
 
         const new_statuses = unparse_statuses(formatted);
         this.set_current_statuses(new_statuses);
     }
 
-    remove_favourite(old_fav) {
-        let old_fav_formatted = parse_single_status(old_fav);
+    remove_favourite(fav_id, fav_message) {
+        let old_fav_formatted =  {id: fav_id, message: fav_message}
 
         let formatted = parse_statuses(this.get_current_statuses())
         for (let idx = 0; idx < formatted.length; idx++) {
-            if (formatted[idx].id === old_fav_formatted.id) {
+            if (formatted[idx].id === old_fav_formatted.id
+                && formatted[idx].message === old_fav_formatted.message
+            ) {
                 formatted.removeAt(idx);
                 break;
             }

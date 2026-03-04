@@ -30,23 +30,28 @@ export var R20A_StatusEditor = class {
         }
 
         const old_statuses = this.get_status();
+        const new_status_entry = (message ? `${statusid}@${message}` : statusid);
 
         const old_status_list = old_statuses
             .split(",")
             .map((s) => s.split("@")[0]);
 
-        if (typeof old_status_list.find(statusid) === "undefined") {
-            const new_status_entry = (message ? `${statusid}@${message}` : statusid);
+        let found_existing = false;
 
-            let new_statuses;
-            if (old_statuses) {
-                new_statuses = old_statuses + "," + new_status_entry;
-            } else {
-                new_statuses = new_status_entry;
+        let new_statuses = old_statuses.split(",");
+        for (let idx = 0; idx < new_statuses.length; idx++) {
+            const new_status = new_statuses[idx];
+            if (new_status.split("@")[0] == statusid) {
+                new_statuses[idx] = new_status_entry;
+                found_existing = true;
             }
-
-            this.update_token_status(new_statuses, "add");
         }
+
+        if (!found_existing) {
+            new_statuses.push(new_status_entry);   
+        }
+
+        this.update_token_status(new_statuses.join(","), "add");
     }
 
     remove_status(statusid) {
