@@ -6,6 +6,7 @@ import { R20A_StatusEditor } from "./R20A_StatusEditor.js";
 import { R20A_SettingsManager } from "./R20A_SettingsManager.js";
 import { DragPositioningHandler } from "./dragging.js";
 import { R20A_Tabs } from "./R20A_Tabs.js";
+import { R20A_FavouritesMenu } from "./R20A_FavouritesMenu.js";
 
 function on_selected_token_modified_jumper(token, new_value, event) {
     window.r20a.on_selected_token_modified(token);
@@ -31,6 +32,7 @@ var R20A = class {
     overlay_dragpositioning = null
     overlay_detailspanel = null
     tabsmanager = null
+    favouritesmenu = null
 
     constructor(engine, settings) {
 
@@ -95,6 +97,9 @@ var R20A = class {
         togglebutton.addEventListener("click", (event) => {
             this.set_detailspanel_open(!this.overlay_detailspanel.open, true);
         })
+
+        this.favouritesmenu = new R20A_FavouritesMenu(this, this.overlay);
+        this.favouritesmenu.update();
 
         this.update_from_settings(this.settings);
     }

@@ -3,7 +3,8 @@ const valid_settings = [
     "overlay_x",
     "overlay_y",
     "overlay_open",
-    "tab_index"
+    "tab_index",
+    "favourite_statuses"
 ]
 
 export var R20A_SettingsManager = class {
@@ -12,6 +13,7 @@ export var R20A_SettingsManager = class {
     overlay_y = 90;
     overlay_open = false;
     tab_index = 0;
+    favourite_statuses = "red@abc,green@def"
 
     constructor() {}
 

@@ -1,4 +1,4 @@
-import { format_statusicon } from "./utils.js";
+import { format_statusicon, parse_statuses } from "./utils.js";
 import { init_drag } from "./dragging.js";
 
 export var R20A_Markermenu = class {
@@ -12,6 +12,8 @@ export var R20A_Markermenu = class {
         this.markeredit = document.getElementById("r20a-markeredit");
 
         this.skip_next_markermenu_update = 0;
+
+        this.current_active_statuses = {}
     }
 
     collect_statuses(tokens, model_key) {
@@ -28,34 +30,36 @@ export var R20A_Markermenu = class {
                 status = "";
             }
 
-            for (const s of status.split(",")) {
-                let split = s.split("@");
-                const status_id = split[0];
-                if (status_id === "") {
-                    continue;
-                }
-                const status_message = split[1] ? split[1] : "";
+            const formatted = parse_statuses(status);
 
-                // {token_count: 2, message_varies: false, message_numeric: false, message: "msg"};
-                if (statuses[status_id]) {
-                    statuses[status_id].token_count++;
-                    if (statuses[status_id].message
-                        && status_message
-                        && statuses[status_id].message !== status_message) {
-                        statuses[status_id].message_varies = true;
-                    } else if (!statuses[status_id].message && status_message) {
-                        statuses[status_id].message = status_message;
+            for (const s of formatted) {
+                /*
+                {
+                    token_count: 2,
+                    message_varies: false,
+                    message_numeric: false,
+                    message: "msg",
+                    raws: ["red@msg", "red@msg"]
+                }
+                */
+                if (statuses[s.id]) {
+                    statuses[s.id].token_count++;
+                    if (statuses[s.id].message !== s.message) {
+                        statuses[s.id].message_varies = true;
+                    } else if (!statuses[s.id].message && s.message) {
+                        statuses[s.id].message = s.message;
                     }
                 } else {
-                    statuses[status_id] = {
+                    statuses[s.id] = {
                         token_count: 1,
-                        message: status_message,
+                        message: s.message,
                         message_varies: false,
-                        message_numeric: false
+                        message_numeric: false,
+                        raws: [s.raw]
                     };
                 }
 
-                statuses[status_id].message_numeric |= Boolean(status_message.match("\\d+"));
+                statuses[s.id].message_numeric |= Boolean(s.message.match("\\d+"));
             }
         }
 
@@ -129,7 +133,15 @@ export var R20A_Markermenu = class {
         icon.classList.add("active");
         tokencount_label.innerText = `${active_status.token_count}/${total_count}`;
 
+        icon.ondblclick = (event) => {
+            // Save the first raw as a favourite, dunno how else to handle varying messages
+            this.controller.favouritesmenu.add_favourite(active_status.raws[0]);
+            this.update_favourited_markers();
+        }
+
         this.markeredit.appendChild(row);
+
+        return {row: row, icon: icon};
     }
 
     save_scrollbox() {
@@ -139,6 +151,42 @@ export var R20A_Markermenu = class {
 
     restore_scrollbox() {
         this.scrollbox.scrollTop = this.scrollbox_top + this.scrollbox.scrollHeight - this.scrollbox_height;
+    }
+
+    update_used_markers() {
+        for (const status_id in this.controller.statusicons) {
+            if (status_id in this.current_active_statuses) {
+                this.controller.statusicons[status_id].markermenu_element.classList.add("active");
+            } else {
+                this.controller.statusicons[status_id].markermenu_element.classList.remove("active");
+            }
+        }
+    }
+
+    update_favourited_markers() {
+        let current_favs = parse_statuses(this.controller.settings.favourite_statuses)
+
+        for (const active_status_id in this.current_active_statuses) {
+
+            let favourited = false;
+
+            const active_status = this.current_active_statuses[active_status_id];
+            for (const fav of current_favs) {
+                if (!active_status.message_varies
+                    && active_status_id === fav.id
+                    && active_status.message === fav.message
+                ) {
+                    favourited = true;
+                    break;
+                }
+            }
+
+            if (favourited) {
+                active_status.icon_element.classList.add("favourited");
+            } else {
+                active_status.icon_element.classList.remove("favourited");
+            }
+        }
     }
 
     update(current_selected_tokens) {
@@ -151,28 +199,25 @@ export var R20A_Markermenu = class {
 
         this.markeredit.innerHTML = "";
 
-        let active_statuses = this.collect_statuses(current_selected_tokens, "statusmarkers");
-
-        // this is ugly, replace
-        for (const status_id in this.controller.statusicons) {
-            if (status_id in active_statuses) {
-                this.controller.statusicons[status_id].markermenu_element.classList.add("active");
-            } else {
-                this.controller.statusicons[status_id].markermenu_element.classList.remove("active");
-            }
-        }
+        const active_statuses = this.collect_statuses(current_selected_tokens, "statusmarkers");
 
         for (const active_status_id in active_statuses) {
 
-            const active_status = active_statuses[active_status_id];
+            let active_status = active_statuses[active_status_id];
 
-            this.add_row(active_status_id, active_status, current_selected_tokens.length);
+            let eles = this.add_row(active_status_id, active_status, current_selected_tokens.length);
+            active_status.icon_element = eles.icon;
         }
+
+        this.current_active_statuses = active_statuses;
 
         init_drag(this.markeredit, (row_element, new_index) => {
             const status_id = row_element.querySelector(".statusicon").dataset.tag;
             this.controller.reorder_status(status_id, new_index);
         });
+
+        this.update_used_markers();
+        this.update_favourited_markers();
 
         this.restore_scrollbox();
     }
