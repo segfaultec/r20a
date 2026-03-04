@@ -84,17 +84,6 @@ var R20A = class {
             this.tabsmanager = new R20A_Tabs(tabsRoot, this.save_tabs_index.bind(this));
         }
 
-        window.addEventListener(R20A_SettingsManager.LoadedEventName, (event) => {
-            window.r20a_settings = new R20A_SettingsManager()
-            window.r20a_settings.deserialize(event.detail)
-            this.on_settings_loaded(window.r20a_settings)
-        })
-        if (window.r20a_settings !== undefined) {
-            this.on_settings_loaded(window.r20a_settings)
-        } else {
-            sendContentScriptMessage({"type":"get_settings"});
-        }
-
         const draghandle = this.overlay.querySelector("#r20a-overlay-drag-grip")
         this.overlay_dragpositioning = new DragPositioningHandler(this.overlay, draghandle, this.save_overlay_position.bind(this))
 
@@ -104,6 +93,8 @@ var R20A = class {
         togglebutton.addEventListener("click", (event) => {
             this.set_detailspanel_open(!this.overlay_detailspanel.open, true);
         })
+
+        this.update_from_settings(window.r20a_settings);
     }
 
     get_label(suffix) {
@@ -204,7 +195,7 @@ var R20A = class {
         });
     }
 
-    on_settings_loaded(settings) {
+    update_from_settings(settings) {
         if (this.scrollbox)
         {
             this.scrollbox.style.height = `${settings.scrollbox_height}px`
@@ -272,22 +263,50 @@ var R20A = class {
     }
 }
 
-function wait_for_init() {
-    if (window.Campaign?.engine?.page?.d20?.token_editor && token_marker_array)
-    {
-        init();
-    }
-    else
-    {
-        setTimeout(wait_for_init, 100);
-    }
+async function wait_for_init() {
+    return new Promise((resolve, reject) => {
+
+        const poll = () => {
+            if (window.Campaign?.engine?.page?.d20?.token_editor && token_marker_array)
+            {
+                resolve();
+            }
+            else
+            {
+                setTimeout(poll, 100);
+            }
+        }
+
+        poll();
+        
+    })
 }
 
-function init() {
+async function load_settings() {
+    return new Promise((resolve, reject) => {
+        const callback = (event) => {
+            window.removeEventListener(R20A_SettingsManager.LoadedEventName, callback)
 
+            let settings = new R20A_SettingsManager()
+            settings.deserialize(event.detail)
+
+            resolve(settings)
+        };
+
+        window.addEventListener(R20A_SettingsManager.LoadedEventName, callback)
+
+        sendContentScriptMessage({"type":"get_settings"});
+    });
+}
+
+async function init() {
+
+    await wait_for_init();
+    window.r20a_settings = await load_settings();
+    
     window.r20a = new R20A(window.Campaign.engine)
 
     console.info("r20a init!")
 }
 
-wait_for_init();
+init();
