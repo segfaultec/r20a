@@ -1,1 +1,2 @@
+del r20a.zip
 7z u -tzip -uq0 -x"!.git" -x!notes -x!store_assets -x"!quick-lint-js.config" -x"!*.tmp" -x"!*.zip" -x"!pack.bat" r20a.zip
