@@ -186,6 +186,9 @@
 #r20a-markeredit {
     display: flex;
     flex-direction: column;
+
+    flex-shrink: 0;
+    flex-basis: 50px;
 }
 
 #r20a-markeredit {
@@ -272,14 +275,24 @@
         border-radius: 4px;
         border: rgb(170,170,170) solid 1px;
         margin: 5px;
+        padding: 5px;
+        height: 80px;
 
         display: flex;
         align-items: center;
         flex-direction: column;
 
+        .statusicon {
+            margin: auto;
+        }
+
         .r20a-text {
             padding: 1px 3px 1px 3px;
             height: 20px;
+        }
+
+        .r20a-text-empty {
+            display: none;
         }
 
         .r20a-closebtn {
@@ -300,6 +313,7 @@
 .r20a-tabs {
 
     align-self: center;
+    padding: 3px;
 
     [role="tablist"] {
         padding-left: 10px;

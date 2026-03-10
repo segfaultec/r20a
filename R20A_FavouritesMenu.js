@@ -81,6 +81,12 @@ export var R20A_FavouritesMenu = class {
 
             text.innerText = status.message;
 
+            if (status.message) {
+                text.classList.remove("r20a-text-empty");
+            } else {
+                text.classList.add("r20a-text-empty");
+            }
+
             closebtn.onclick = (event) => {
                 this.remove_favourite(status.id, status.message);
             }
